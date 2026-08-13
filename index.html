@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PG88 — Demo Đăng ký / Đăng nhập</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ASSETS — thay 2 đường dẫn dưới đây bằng file thật khi deploy.
+   Link Figma chỉ sống ~7 ngày.
+   ============================================================ */
+:root{
+  --logo-url:url("https://www.figma.com/api/mcp/asset/5b5caa81-2fc0-42c6-944c-9090bd4ef246.png");
+  --banner-url:url("https://www.figma.com/api/mcp/asset/446d89a1-5417-4aaa-96e1-0d3c953cee60.png");
+
+  --g900:#1b5e20; --g700:#2e7d32; --g600:#388e3c;
+  --th:#1a2e1a; --tl:#2e4d2e; --tb:#3d5c3d; --ts:#5a7a5a;
+  --inp:#f1f8f1; --page:#e8f5e9; --bd:rgba(0,0,0,.09);
+  --btn:linear-gradient(171.8deg,#1b5e20 0%,#2e7d32 100%);
+  --err:#c62828; --warn:#ef6c00;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:'Be Vietnam Pro',system-ui,-apple-system,sans-serif;background:#101512;color:var(--th);
+  display:flex;align-items:center;justify-content:center;padding:16px;gap:18px}
+
+/* ---------- phone shell ---------- */
+.phone{width:402px;max-width:100%;height:min(880px,96vh);background:var(--page);border-radius:26px;
+  overflow:hidden;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.5);display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 10px;background:#fff;flex:0 0 auto}
+.logo{width:114px;height:32px;background:var(--logo-url) center/contain no-repeat}
+.xbtn{width:36px;height:36px;border-radius:18px;background:var(--inp);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tl)}
+.scroll{flex:1 1 auto;overflow-y:auto;background:#fff;-webkit-overflow-scrolling:touch}
+.scroll::after{content:"";display:block;height:28px;background:var(--page)}
+.pad{padding:0 20px 24px}
+.banner{margin:8px 20px;border-radius:12px;aspect-ratio:2590/607;background:var(--banner-url) center/cover no-repeat;background-color:#0d2b12}
+
+/* ---------- type ---------- */
+h1{font-size:24px;line-height:36px;font-weight:700;letter-spacing:-.5px;margin:20px 0 0;color:var(--th)}
+.sub{font-size:13px;line-height:19.5px;color:var(--ts);margin:2px 0 0}
+.lab{font-size:13px;line-height:19.5px;font-weight:600;color:var(--tl);margin:16px 0 6px;display:flex;justify-content:space-between;align-items:center}
+.hint{font-size:11.5px;line-height:17px;color:var(--ts);margin:6px 0 0}
+.link{color:var(--g900);font-weight:600;cursor:pointer;background:0;border:0;padding:0;font:inherit;font-weight:700}
+.ctr{text-align:center}
+
+/* ---------- inputs ---------- */
+.field{display:flex;align-items:center;gap:12px;height:50px;padding:0 16px;background:var(--inp);
+  border:2px solid transparent;border-radius:16px;transition:border-color .15s}
+.field:focus-within{border-color:var(--g600)}
+.field.bad{border-color:var(--err)}
+.field input{flex:1;min-width:0;border:0;background:0;outline:0;font:400 14px 'Be Vietnam Pro',sans-serif;color:var(--th)}
+.field input::placeholder{color:rgba(26,46,26,.5)}
+.field .ic{flex:0 0 17px;color:var(--tl);opacity:.75;display:flex}
+.field button{border:0;background:0;padding:0;cursor:pointer;color:var(--tl);opacity:.7;display:flex}
+.err{color:var(--err);font-size:12px;line-height:17px;margin:6px 0 0;display:flex;gap:5px;align-items:flex-start}
+
+/* ---------- buttons ---------- */
+.btn{width:100%;height:52px;border:0;border-radius:16px;background:var(--btn);color:#fff;
+  font:700 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;box-shadow:0 6px 10px rgba(27,94,32,.3);margin-top:20px}
+.btn:disabled{background:#e0eae0;color:#9bb09b;box-shadow:none;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--g900);border:1.5px solid var(--g900);box-shadow:none}
+.btn.sm{height:44px;font-size:14px;margin-top:12px}
+.socials{display:flex;gap:10px;margin-top:16px}
+.soc{flex:1;height:48px;border:1px solid var(--bd);border-radius:14px;background:#fff;display:flex;
+  align-items:center;justify-content:center;gap:7px;cursor:pointer;font:600 12px 'Be Vietnam Pro',sans-serif;color:var(--th);
+  box-shadow:0 2px 4px rgba(0,0,0,.05)}
+.soc svg{width:20px;height:20px}
+.divi{display:flex;align-items:center;gap:12px;margin-top:20px}
+.divi span{font-size:12px;color:var(--ts);font-weight:500;white-space:nowrap}
+.divi i{flex:1;height:1px;background:var(--bd)}
+.check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;cursor:pointer}
+.box{width:20px;height:20px;border:2px solid #bdbdbd;border-radius:6px;flex:0 0 20px;display:flex;
+  align-items:center;justify-content:center;color:#fff}
+.check.on .box{background:var(--g700);border-color:var(--g700)}
+.check span{font-size:13px;line-height:19.5px;font-weight:500;color:var(--tb)}
+
+/* ---------- otp ---------- */
+.hero{width:56px;height:56px;border-radius:16px;background:var(--inp);display:flex;align-items:center;
+  justify-content:center;color:var(--g700);margin:24px auto 0}
+.otp{display:flex;gap:8px;justify-content:center;margin-top:22px}
+.otp input{width:100%;height:52px;text-align:center;font:700 20px 'Be Vietnam Pro',sans-serif;color:var(--th);
+  background:var(--inp);border:2px solid transparent;border-radius:12px;outline:0}
+.otp input.f{border-color:var(--g700);background:#fff}
+.cdown{font-size:12.5px;color:var(--ts);text-align:center;margin-top:16px}
+.cdown b{color:var(--g900)}
+
+/* ---------- stepper ---------- */
+.steps{display:flex;align-items:flex-start;padding:14px 20px 4px;background:#fff}
+.step{flex:1;text-align:center;position:relative;font-size:9.5px;color:var(--ts);font-weight:500}
+.step i{width:22px;height:22px;border-radius:11px;background:#e0eae0;color:#8aa38a;display:flex;align-items:center;
+  justify-content:center;margin:0 auto 4px;font-style:normal;font-size:11px;font-weight:700}
+.step.on i{background:var(--g700);color:#fff}
+.step.dn i{background:var(--g700);color:#fff}
+.step:not(:last-child):after{content:"";position:absolute;top:11px;left:calc(50% + 15px);right:calc(-50% + 15px);height:2px;background:#e0eae0}
+.step.dn:not(:last-child):after{background:var(--g700)}
+
+/* ---------- modal ---------- */
+.ov{position:absolute;inset:0;background:rgba(20,32,20,.55);display:flex;align-items:center;justify-content:center;
+  padding:24px;z-index:40;animation:fade .18s}
+@keyframes fade{from{opacity:0}}
+.card{background:#fff;border-radius:20px;padding:26px 22px 22px;width:100%;max-width:330px;text-align:center;position:relative;
+  animation:pop .2s}
+@keyframes pop{from{transform:scale(.94);opacity:0}}
+.card .cx{position:absolute;top:12px;right:12px;border:0;background:0;cursor:pointer;color:#9bb09b}
+.card h3{font-size:17px;line-height:24px;font-weight:700;color:var(--th);margin:14px 0 0}
+.card p{font-size:12.5px;line-height:19px;color:var(--ts);margin:8px 0 0}
+.tick{width:56px;height:56px;border-radius:28px;background:var(--g600);display:flex;align-items:center;justify-content:center;
+  color:#fff;margin:0 auto}
+.tick.mail{background:var(--inp);color:var(--g700)}
+
+/* ---------- home ---------- */
+.hcard{background:var(--btn);border-radius:18px;padding:18px;color:#fff;margin-top:20px}
+.hcard .nm{font-size:17px;font-weight:700}
+.hcard .mt{font-size:12px;opacity:.85;margin-top:2px}
+.hcard .bal{font-size:24px;font-weight:700;margin-top:14px}
+.warnbox{background:#fff8ec;border:1px solid #f5d9a8;border-radius:14px;padding:14px;margin-top:16px}
+.warnbox b{font-size:13px;color:#8a4b00;display:flex;gap:7px;align-items:center}
+.warnbox p{font-size:12px;line-height:18px;color:#8a5b1e;margin:6px 0 0}
+.rows{margin-top:16px;border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bd);
+  font-size:13.5px;font-weight:500;color:var(--tb);cursor:pointer;background:#fff}
+.row:last-child{border-bottom:0}
+.row .ic{color:var(--g700);display:flex}
+.row .rt{margin-left:auto;font-size:11px;color:var(--warn);font-weight:600}
+.row.off{opacity:.55}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chip{font-size:11px;padding:5px 10px;border-radius:20px;background:var(--inp);color:var(--tl);font-weight:600}
+
+/* ---------- toast ---------- */
+#toast{position:absolute;left:16px;right:16px;bottom:22px;z-index:60;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.tst{background:#1f2d1f;color:#fff;border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,.3);animation:up .22s}
+.tst.bad{background:#7f1d1d}
+@keyframes up{from{transform:translateY(10px);opacity:0}}
+
+/* ---------- demo panel ---------- */
+.side{width:330px;max-height:96vh;overflow-y:auto;background:#18201a;border-radius:18px;padding:18px;color:#d7e4d7;
+  font-size:12.5px;line-height:1.55;border:1px solid #26332a}
+.side h4{margin:0 0 4px;font-size:13px;color:#fff;letter-spacing:.02em}
+.side .muted{color:#8fa691;font-size:11.5px;margin:0 0 14px}
+.side hr{border:0;border-top:1px solid #26332a;margin:16px 0}
+.side button{width:100%;text-align:left;background:#212c22;border:1px solid #2e3d30;color:#d7e4d7;border-radius:10px;
+  padding:9px 11px;font:500 12px 'Be Vietnam Pro',sans-serif;cursor:pointer;margin-bottom:7px}
+.side button:hover{background:#293527}
+.side button b{color:#fff}
+.side .u{background:#212c22;border:1px solid #2e3d30;border-radius:10px;padding:9px 11px;margin-bottom:7px;font-size:11.5px}
+.side .u b{color:#fff}
+.side .tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;background:#2e3d30;color:#a9c4ab;margin-right:4px}
+.side .tag.hi{background:#5a3a10;color:#f0c07a}
+.side .tag.lk{background:#5a1616;color:#f0a0a0}
+.mailitem{background:#212c22;border:1px solid #2e3d30;border-radius:10px;padding:10px 11px;margin-bottom:7px;cursor:pointer}
+.mailitem b{color:#fff;font-size:11.5px;display:block}
+.mailitem span{color:#8fa691;font-size:10.5px}
+.mailbody{background:#fff;color:#222;border-radius:10px;padding:14px;font-size:11.5px;line-height:1.6;margin-bottom:8px;white-space:pre-wrap}
+@media(max-width:860px){body{flex-direction:column;align-items:stretch;padding:8px}.phone{height:88vh;margin:0 auto}.side{width:auto;max-height:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="topbar"><div class="logo" role="img" aria-label="PG88"></div>
+    <button class="xbtn" onclick="go('login')" aria-label="Đóng">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div id="stepper"></div>
+  <div class="scroll" id="scroll"><div id="screen"></div></div>
+  <div id="modal"></div>
+  <div id="toast"></div>
+</div>
+
+<div class="side">
+  <h4>Bảng điều khiển demo</h4>
+  <p class="muted">Chỉ dành cho người thuyết trình. Bản thật không có phần này.</p>
+  <div id="panel"></div>
+</div>
+
+<script>
+/* =========================================================================
+   PG88 — Demo luồng đăng ký / đăng nhập / auto-map
+   Không có server. Dữ liệu lưu trong localStorage của trình duyệt.
+   ========================================================================= */
+
+/* ---------------- icons ---------------- */
+const I = {
+  mail:'<path d="M4 4h16v16H4z" fill="none"/><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  eyeoff:'<path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 8 10 8a18 18 0 0 1-2.16 3.19M6.6 6.6A18 18 0 0 0 2 12s3.5 8 10 8a9 9 0 0 0 5.4-1.6"/><path d="m2 2 20 20"/>',
+  user:'<path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="8" r="4"/>',
+  check:'<path d="m20 6-11 11-5-5"/>',
+  key:'<path d="m15.5 7.5 3 3L22 7l-3-3"/><path d="m2 22 5.5-5.5"/><circle cx="11" cy="13" r="5"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M12 8v4M12 16h.01"/>',
+  refresh:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',
+  wallet:'<rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M16 15h2"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+  unlink:'<path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 4.5 7.2"/><path d="m2 2 20 20"/>',
+  gift:'<rect x="3" y="8" width="18" height="4"/><path d="M12 8v13M5 12v9h14v-9"/><path d="M12 8a3 3 0 1 0-3-3M12 8a3 3 0 1 1 3-3"/>',
+  arrow:'<path d="m15 18-6-6 6-6"/>'
+};
+const ic=(n,s=17)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+const BRAND={
+ google:'<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.06 12.25c0-.85-.08-1.67-.22-2.45H12v4.64h6.2a5.3 5.3 0 0 1-2.3 3.48v2.9h3.72c2.17-2 3.44-4.95 3.44-8.57z"/><path fill="#34A853" d="M12 24c3.11 0 5.72-1.03 7.62-2.79l-3.72-2.89c-1.03.69-2.35 1.1-3.9 1.1-3 0-5.55-2.02-6.46-4.75H1.69v2.98A11.5 11.5 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.54 14.67a6.9 6.9 0 0 1 0-4.42V7.27H1.69a11.5 11.5 0 0 0 0 10.38l3.85-2.98z"/><path fill="#EA4335" d="M12 4.75c1.69 0 3.21.58 4.4 1.72l3.3-3.3C17.72 1.2 15.11 0 12 0 7.48 0 3.57 2.59 1.69 6.36l3.85 2.98C6.45 6.77 9 4.75 12 4.75z"/></svg>',
+ facebook:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#1877F2"/><path fill="#fff" d="M16.67 15.47 17.2 12h-3.33V9.75c0-.95.47-1.88 1.96-1.88h1.51V4.92s-1.37-.23-2.68-.23c-2.74 0-4.53 1.66-4.53 4.66V12H7.08v3.47h3.05v8.39a12.1 12.1 0 0 0 3.74 0v-8.39h2.8z"/></svg>',
+ apple:'<svg viewBox="0 0 24 24"><path d="M17.05 12.54c-.03-2.7 2.2-4 2.3-4.06-1.25-1.83-3.2-2.08-3.9-2.11-1.66-.17-3.24.97-4.08.97-.84 0-2.14-.95-3.52-.92-1.81.03-3.48 1.05-4.41 2.67-1.88 3.27-.48 8.1 1.35 10.75.9 1.3 1.96 2.75 3.36 2.7 1.35-.06 1.86-.87 3.49-.87 1.63 0 2.09.87 3.51.84 1.45-.03 2.37-1.32 3.26-2.62 1.03-1.5 1.45-2.96 1.47-3.03-.03-.01-2.82-1.08-2.85-4.29zM14.5 4.6c.74-.9 1.24-2.15 1.1-3.4-1.07.05-2.36.71-3.13 1.61-.68.79-1.28 2.06-1.12 3.28 1.19.09 2.41-.6 3.15-1.49z"/></svg>'
+};
+const PNAME={google:'Google',facebook:'Facebook',apple:'Apple',email:'Email'};
+
+/* ---------------- store ---------------- */
+const KEY='pg88_demo_v3';
+let DB;
+function load(){ try{DB=JSON.parse(localStorage.getItem(KEY))}catch(e){DB=null}
+  if(!DB||!DB.users) DB={users:[],mails:[],session:null,pending:null,seq:1}; }
+function save(){ localStorage.setItem(KEY,JSON.stringify(DB)); paintPanel(); }
+function reset(){ localStorage.removeItem(KEY); load(); save(); go('login'); toast('Đã xóa toàn bộ dữ liệu demo.'); }
+
+const norm=e=>(e||'').trim().toLowerCase();
+const findByEmail=e=>DB.users.find(u=>norm(u.email)===norm(e));
+const findByUid=(p,uid)=>DB.users.find(u=>u.identities.some(i=>i.provider===p&&i.uid===uid));
+const verifiedEmailUser=e=>DB.users.find(u=>norm(u.email)===norm(e)&&u.emailVerified);
+const otp=()=>String(Math.floor(100000+Math.random()*900000));
+const now=()=>Date.now();
+const mask=e=>{const[a,b]=String(e).split('@');return a.slice(0,2)+'***@'+b};
+const money=n=>n.toLocaleString('vi-VN')+' đ';
+
+function newUser(o){ const u=Object.assign({
+  id:DB.seq++, email:null, emailVerified:false, password:null, nickname:'Người chơi',
+  identities:[], status:'active', level:1, balance:0, deposit:0, restrictedUntil:0,
+  autoMapped:false, createdAt:now()
+},o); DB.users.push(u); return u; }
+
+function mail(tpl,to,vars){ DB.mails.unshift({id:Date.now()+Math.random(),tpl,to,at:now(),vars:vars||{}}); }
+
+/* ---------------- email templates (theo tài liệu đặc tả) ---------------- */
+const TPL={
+ '11.1':v=>({s:'Xác thực tài khoản PG88 của bạn',b:
+`Chào bạn,
+
+Cảm ơn bạn đã đăng ký PG88. Nhập mã dưới đây để hoàn tất:
+
+      ${v.code}
+
+Mã có hiệu lực trong 15 phút.
+
+Nếu bạn không đăng ký PG88, hãy bỏ qua email này.`}),
+ '11.2':v=>({s:'Tài khoản PG88 của bạn vừa được liên kết với '+v.p,b:
+`Chào bạn,
+
+Chúng tôi vừa nhận thấy bạn đăng nhập PG88 bằng ${v.p} với địa chỉ email trùng với tài khoản sẵn có của bạn, nên đã tự động liên kết hai phương thức này vào cùng một tài khoản.
+
+  Tài khoản: ${v.nick} — cấp ${v.lv}
+  Thời gian: ${v.t}
+
+Từ giờ bạn đăng nhập bằng cách nào cũng vào đúng tài khoản này. Toàn bộ tiến trình và vật phẩm được giữ nguyên.
+
+Nếu là bạn: không cần làm gì thêm.
+Nếu không phải bạn: bấm "Không phải tôi" để khóa tài khoản ngay lập tức.
+
+Trong 72 giờ tới, các thao tác đổi mật khẩu, hủy liên kết và giao dịch vật phẩm tạm bị hạn chế để bảo vệ bạn.
+
+Nếu cần tách liên kết sau này, hãy liên hệ hỗ trợ trong vòng 14 ngày.`}),
+ '11.3':v=>({s:'Bạn đã liên kết '+v.p+' với tài khoản PG88',b:
+`Chào bạn,
+
+Tài khoản PG88 của bạn giờ đã đăng nhập được bằng ${v.p}.
+
+Các phương thức đăng nhập hiện tại: ${v.list}
+Thời gian: ${v.t}
+
+Nếu không phải bạn thực hiện, hãy liên hệ hỗ trợ ngay.`}),
+ '11.5':v=>({s:'Đặt lại mật khẩu PG88',b:
+`Chào bạn,
+
+Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản PG88 của bạn.
+
+      Mã xác thực: ${v.code}
+
+Mã có hiệu lực trong 30 phút và chỉ dùng được một lần.
+
+Nếu bạn không yêu cầu, hãy bỏ qua email này — mật khẩu của bạn không thay đổi.`}),
+ '11.6':v=>({s:'Về yêu cầu đặt lại mật khẩu PG88',b:
+`Chào bạn,
+
+Tài khoản PG88 gắn với email này không sử dụng mật khẩu. Bạn đang đăng nhập bằng ${v.p}.
+
+Hãy chọn phương thức đó ở màn hình đăng nhập. Nếu muốn dùng thêm mật khẩu, bạn có thể thiết lập trong Cài đặt tài khoản sau khi đăng nhập.`}),
+ '11.7':v=>({s:'Mật khẩu tài khoản PG88 vừa được thay đổi',b:
+`Chào bạn,
+
+Mật khẩu tài khoản PG88 của bạn đã được thay đổi vào ${v.t}.
+
+Nếu không phải bạn thực hiện, hãy liên hệ hỗ trợ ngay để được khóa tài khoản tạm thời.`})
+};
+
+/* ---------------- ui helpers ---------------- */
+const $=s=>document.querySelector(s);
+let S={};                       // per-screen scratch state
+function go(name,arg){ S={screen:name,arg:arg||{}}; render(); $('#scroll').scrollTop=0; }
+function toast(msg,bad){ const d=document.createElement('div'); d.className='tst'+(bad?' bad':'');
+  d.textContent=msg; $('#toast').appendChild(d); setTimeout(()=>d.remove(),4200); }
+function modal(html){ $('#modal').innerHTML=html?`<div class="ov">${html}</div>`:''; }
+function closeModal(){ modal(''); }
+
+const emailOK=e=>/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(e);
+const passOK=p=>p.length>=8&&p.length<=20&&/[a-zA-Z]/.test(p);
+
+/* ---------------- social accounts (giả lập) ---------------- */
+const SOCIAL={
+ google:[{uid:'g1',email:'nguyenvana@gmail.com',name:'Nguyễn Văn A'},
+         {uid:'g2',email:'thuha92@gmail.com',name:'Thu Hà'}],
+ facebook:[{uid:'f1',email:'nguyenvana@gmail.com',name:'Nguyen Van A'},
+           {uid:'f2',email:null,name:'Minh Tuấn',note:'Không cấp quyền email'}],
+ apple:[{uid:'a1',email:'nguyenvana@gmail.com',name:'Nguyen Van A'},
+        {uid:'a2',email:'xk29fj7q@privaterelay.appleid.com',name:'Người dùng Apple',relay:true,note:'Ẩn email của tôi'}]
+};
+
+/* =========================================================================
+   SCREENS
+   ========================================================================= */
+function render(){
+  $('#stepper').innerHTML='';
+  const f=({login:scLogin,register:scRegister,otp:scOtp,home:scHome,
+    fp1:scFp1,fp2:scFp2,fp3:scFp3,social:scSocial,stepup:scStepUp,welcome:scWelcome})[S.screen];
+  $('#screen').innerHTML=f?f():'';
+  if(S.after) {const a=S.after; S.after=null; a();}
+}
+
+/* ---------- Đăng nhập ---------- */
+function scLogin(){
+  return `<div class="banner"></div><div class="pad">
+  <h1>Đăng nhập</h1><p class="sub">Chào mừng bạn quay trở lại!</p>
+  <div class="lab">Email</div>
+  <div class="field" id="fe"><span class="ic">${ic('mail')}</span><input id="e" type="email" placeholder="Vui lòng nhập email" autocomplete="username"></div>
+  <div class="lab">Mật khẩu <button class="link" onclick="go('fp1')">Quên mật khẩu?</button></div>
+  <div class="field" id="fp"><span class="ic">${ic('lock')}</span><input id="p" type="password" placeholder="Vui lòng nhập mật khẩu" autocomplete="current-password">
+    <button onclick="tog('p',this)">${ic('eye')}</button></div>
+  <div id="lerr"></div>
+  <label class="check" id="rm" onclick="this.classList.toggle('on')"><span class="box">${ic('check',13)}</span><span>Nhớ mật khẩu tài khoản của bạn</span></label>
+  <button class="btn" onclick="doLogin()">Đăng nhập</button>
+  <div class="divi"><i></i><span>hoặc tiếp tục với</span><i></i></div>
+  <div class="socials">
+    <div class="soc" onclick="go('social',{p:'google'})">${BRAND.google}Google</div>
+    <div class="soc" onclick="go('social',{p:'facebook'})">${BRAND.facebook}Facebook</div>
+    <div class="soc" onclick="go('social',{p:'apple'})">${BRAND.apple}Apple</div>
+  </div>
+  <p class="sub ctr" style="margin-top:18px">Chưa có tài khoản? <button class="link" onclick="go('register')">Đăng ký ngay</button></p>
+  </div>`;
+}
+function tog(id,b){const i=$('#'+id);const h=i.type==='password';i.type=h?'text':'password';b.innerHTML=ic(h?'eyeoff':'eye');}
+function fieldErr(id,msg){ $('#'+id).classList.add('bad'); }
+function showErr(box,msg){ $('#'+box).innerHTML=`<div class="err">${ic('shield',14)}<span>${msg}</span></div>`; }
+
+function doLogin(){
+  const e=norm($('#e').value), p=$('#p').value;
+  $('#lerr').innerHTML=''; $('#fe').classList.remove('bad'); $('#fp').classList.remove('bad');
+  if(!emailOK(e)){fieldErr('fe');return showErr('lerr','Email không hợp lệ.')}
+  const u=findByEmail(e);
+  // Không tiết lộ email có tồn tại hay không (ngoại lệ 6)
+  if(!u||!u.password||u.password!==p){fieldErr('fp');return showErr('lerr','Email hoặc mật khẩu không đúng.')}
+  if(u.status==='locked') return showErr('lerr','Tài khoản đang bị khóa. Vui lòng liên hệ hỗ trợ.');
+  if(!u.emailVerified){ DB.pending={type:'register',uid:u.id,email:e,code:otp(),exp:now()+15*6e4,tries:0};
+    mail('11.1',e,{code:DB.pending.code}); save();
+    toast('Tài khoản chưa xác thực. Đã gửi lại mã.'); return go('otp'); }
+  DB.session=u.id; save(); go('home');
+}
+
+/* ---------- Đăng ký ---------- */
+let CAP='';
+function newCap(){ CAP=Array.from({length:5},()=>'abcdefghkmnpqrstuvwxyzABCDEFGHKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*52)]).join(''); }
+function scRegister(){
+  newCap();
+  return `<div class="pad">
+  <h1>Đăng ký tài khoản mới!</h1>
+  <div class="lab">Email</div>
+  <div class="field" id="fe"><span class="ic">${ic('mail')}</span><input id="e" type="email" placeholder="Vui lòng nhập email"></div>
+  <p class="hint">Nhập email chính chủ để nhận mã xác nhận và nút tiến lên đầu.</p>
+  <div class="lab">Mật khẩu</div>
+  <div class="field" id="fp"><span class="ic">${ic('lock')}</span><input id="p" type="password" placeholder="Nhập mật khẩu">
+    <button onclick="tog('p',this)">${ic('eye')}</button></div>
+  <div class="field" id="fp2" style="margin-top:10px"><span class="ic">${ic('lock')}</span><input id="p2" type="password" placeholder="Xác nhận mật khẩu">
+    <button onclick="tog('p2',this)">${ic('eye')}</button></div>
+  <p class="hint">Mật khẩu gồm 8–20 ký tự, có ít nhất 1 chữ cái; có thể dùng số và ký tự đặc biệt.</p>
+  <div class="lab">Nickname</div>
+  <div class="field" id="fn"><span class="ic">${ic('user')}</span><input id="n" placeholder="Tên hiển thị khi chơi"></div>
+  <div class="lab">Mã xác minh</div>
+  <div class="field" id="fc"><input id="c" placeholder="Nhập mã xác minh">
+    <span style="font:700 15px/1 'Be Vietnam Pro';letter-spacing:3px;color:#4a6b4a;background:#fff;padding:6px 9px;border-radius:8px;user-select:none;transform:skewX(-6deg)" id="capv">${CAP}</span>
+    <button onclick="newCap();document.getElementById('capv').textContent=CAP">${ic('refresh',16)}</button></div>
+  <div id="rerr"></div>
+  <label class="check" id="tos" onclick="this.classList.toggle('on')"><span class="box">${ic('check',13)}</span>
+    <span>Tôi xác nhận đủ tuổi và đồng ý với <b style="color:var(--g900)">Chính sách thành viên</b> của PG88.</span></label>
+  <button class="btn" onclick="doRegister()">Đăng ký ngay</button>
+  <p class="sub ctr" style="margin-top:16px">Đã có tài khoản? <button class="link" onclick="go('login')">Đăng nhập ngay</button></p>
+  </div>`;
+}
+function doRegister(){
+  const e=norm($('#e').value),p=$('#p').value,p2=$('#p2').value,n=$('#n').value.trim(),c=$('#c').value.trim();
+  ['fe','fp','fp2','fn','fc'].forEach(i=>$('#'+i).classList.remove('bad')); $('#rerr').innerHTML='';
+  if(!emailOK(e)){fieldErr('fe');return showErr('rerr','Email không hợp lệ.')}
+  if(!passOK(p)){fieldErr('fp');return showErr('rerr','Mật khẩu phải 8–20 ký tự và có ít nhất 1 chữ cái.')}
+  if(p!==p2){fieldErr('fp2');return showErr('rerr','Hai mật khẩu không khớp.')}
+  if(!n){fieldErr('fn');return showErr('rerr','Vui lòng nhập nickname.')}
+  if(c.toLowerCase()!==CAP.toLowerCase()){fieldErr('fc');return showErr('rerr','Mã xác minh không đúng.')}
+  if(!$('#tos').classList.contains('on')) return showErr('rerr','Bạn cần đồng ý với chính sách thành viên.');
+
+  const ex=findByEmail(e);
+  // Ngoại lệ 1 — email đã tồn tại & đã xác thực bằng mật khẩu
+  if(ex&&ex.emailVerified&&ex.password){fieldErr('fe');
+    return showErr('rerr','Email đã được sử dụng. Hãy đăng nhập hoặc dùng "Quên mật khẩu".')}
+  // Mục 5 — email trùng tài khoản mạng xã hội đã xác thực → hỏi liên kết (màn Figma 31:211)
+  if(ex&&ex.emailVerified&&!ex.password&&ex.identities.length){
+    S.pendReg={e,p,n}; return askLink(ex);
+  }
+  // Ngoại lệ 2 — đang chờ xác thực, mã còn hạn
+  if(DB.pending&&DB.pending.type==='register'&&norm(DB.pending.email)===e&&DB.pending.exp>now()){
+    return showErr('rerr','Email này đang chờ xác thực. Vui lòng nhập mã đã gửi hoặc bấm gửi lại mã.');
+  }
+  const u=ex&&!ex.emailVerified?ex:newUser({email:e});
+  u.password=p; u.nickname=n; u.emailVerified=false;
+  if(!u.identities.some(i=>i.provider==='email')) u.identities.push({provider:'email',uid:e,email:e});
+  DB.pending={type:'register',uid:u.id,email:e,code:otp(),exp:now()+15*6e4,tries:0};
+  mail('11.1',e,{code:DB.pending.code}); save(); go('otp');
+}
+
+/* modal Xác nhận liên kết tài khoản — bám đúng frame 31:211 */
+function askLink(u){
+  const provs=[...new Set(u.identities.map(i=>PNAME[i.provider]))].join('/');
+  modal(`<div class="card"><button class="cx" onclick="closeModal()">${ic('mail')&&'<svg width=16 height=16 viewBox="0 0 24 24" fill=none stroke=currentColor stroke-width=2.5 stroke-linecap=round><path d="M18 6 6 18M6 6l12 12"/></svg>'}</button>
+    <div class="tick mail">${ic('mail',26)}</div>
+    <h3>Xác nhận liên kết tài khoản</h3>
+    <p>Email này đã được sử dụng cho tài khoản hiện tại thông qua ${provs}. Bạn có muốn liên kết để sử dụng chung phương thức đăng nhập không.</p>
+    <button class="btn sm" onclick="confirmLink(${u.id})">Đồng ý</button>
+    <button class="btn sm ghost" onclick="closeModal()">Để sau</button></div>`);
+}
+function confirmLink(id){
+  const u=DB.users.find(x=>x.id===id), r=S.pendReg;
+  u.password=r.p; if(r.n)u.nickname=r.n;
+  if(!u.identities.some(i=>i.provider==='email')) u.identities.push({provider:'email',uid:r.e,email:r.e});
+  const list=u.identities.map(i=>PNAME[i.provider]).join(', ');
+  mail('11.3',u.email,{p:'Email',list,t:new Date().toLocaleString('vi-VN')});
+  DB.session=u.id; save();
+  modal(`<div class="card"><div class="tick">${ic('check',30)}</div>
+    <h3>Xác nhận liên kết tài khoản<br>thành công !</h3>
+    <p>Giờ đây bạn có thể đăng nhập bằng email hoặc phương thức mạng xã hội có cùng email này. Mọi bạn tận hưởng những phút giây thư giãn vui vẻ. Chúc bạn luôn đại cát đại lợi 8386.</p>
+    <button class="btn sm" onclick="closeModal();go('home')">Vào chơi ngay</button></div>`);
+}
+
+/* ---------- OTP ---------- */
+function scOtp(){
+  const p=DB.pending||{};
+  const fp=S.screen==='otp'&&p.type==='forgot';
+  setTimeout(startCd,0);
+  return `<div class="pad ctr">
+  <div class="hero">${ic('mail',26)}</div>
+  <h1 style="font-size:20px;line-height:28px;margin-top:18px">Xác thực email</h1>
+  <p class="sub">Mã xác thực gồm 6 chữ số đã được gửi đến<br><b style="color:var(--tl)">${mask(p.email||'')}</b></p>
+  <div class="otp">${Array.from({length:6},(_,i)=>`<input id="o${i}" inputmode="numeric" maxlength="1" oninput="otpIn(${i})" onkeydown="otpKey(event,${i})">`).join('')}</div>
+  <div id="oerr"></div>
+  <button class="btn" id="ob" disabled onclick="doOtp()">Xác nhận</button>
+  <p class="cdown" id="cd"></p>
+  <p class="hint" style="margin-top:6px">Không nhận được email? Kiểm tra thư mục spam hoặc <b style="color:var(--g900)">liên hệ hỗ trợ</b>.</p>
+  <div class="chips" style="justify-content:center"><span class="chip" style="background:#fff5d6;color:#7a5a00">Bản demo — mã của bạn là ${p.code||''}</span></div>
+  </div>`;
+}
+function otpIn(i){ const el=$('#o'+i); el.value=el.value.replace(/\D/g,''); el.classList.toggle('f',!!el.value);
+  if(el.value&&i<5)$('#o'+(i+1)).focus(); $('#ob').disabled=otpVal().length<6; }
+function otpKey(e,i){ if(e.key==='Backspace'&&!$('#o'+i).value&&i>0)$('#o'+(i-1)).focus(); }
+function otpVal(){ return Array.from({length:6},(_,i)=>$('#o'+i)?$('#o'+i).value:'').join(''); }
+let cdT;
+function startCd(){ clearInterval(cdT); let s=60; const t=()=>{ const el=$('#cd'); if(!el)return clearInterval(cdT);
+  el.innerHTML=s>0?`Gửi lại mã sau <b>00:${String(s).padStart(2,'0')}</b>`:`<button class="link" onclick="resend()">Gửi lại mã</button>`; s--; };
+  t(); cdT=setInterval(t,1000); }
+function resend(){ DB.pending.code=otp(); DB.pending.exp=now()+15*6e4;
+  mail(DB.pending.type==='forgot'?'11.5':'11.1',DB.pending.email,{code:DB.pending.code}); save();
+  toast('Đã gửi lại mã: '+DB.pending.code); render(); }
+function doOtp(){
+  const p=DB.pending; const v=otpVal();
+  if(!p||p.exp<now()) return showErr('oerr','Mã đã hết hạn. Vui lòng bấm gửi lại mã.');
+  if(v!==p.code){ p.tries++; save();
+    if(p.tries>=5) return showErr('oerr','Bạn đã nhập sai quá 5 lần. Vui lòng thử lại sau ít phút.');
+    return showErr('oerr',`Mã xác thực không đúng. Còn ${5-p.tries} lần thử.`); }
+  if(p.type==='forgot'){ DB.pending.verified=true; save(); return go('fp3'); }
+  const u=DB.users.find(x=>x.id===p.uid); u.emailVerified=true; DB.session=u.id; DB.pending=null; save();
+  modal(`<div class="card"><div class="tick">${ic('check',30)}</div>
+    <h3>Đăng ký thành công !</h3>
+    <p>Mời bạn tận hưởng những phút giây thư giãn vui vẻ. Chúc bạn luôn đại cát đại lợi 8386.</p>
+    <button class="btn sm" onclick="closeModal();go('home')">Vào chơi ngay</button></div>`);
+}
+
+/* ---------- Social: màn chọn tài khoản (giả lập) ---------- */
+function scSocial(){
+  const p=S.arg.p, list=SOCIAL[p];
+  return `<div class="pad">
+  <button class="link" style="margin-top:16px;display:flex;gap:4px;align-items:center" onclick="go('login')">${ic('arrow',15)} Quay lại</button>
+  <div style="display:flex;gap:10px;align-items:center;margin-top:16px">
+    <span style="width:32px;height:32px">${BRAND[p]}</span>
+    <div><div style="font-weight:700;font-size:16px">Đăng nhập bằng ${PNAME[p]}</div>
+    <div class="sub">Chọn một tài khoản để tiếp tục</div></div></div>
+  <div class="rows" style="margin-top:18px">
+    ${list.map(a=>`<div class="row" onclick="socialPick('${p}','${a.uid}')">
+      <span class="ic">${ic('user',18)}</span>
+      <div><div style="color:var(--th);font-weight:600">${a.name}</div>
+      <div class="sub" style="font-size:11.5px">${a.email||'—'}${a.note?' · '+a.note:''}</div></div></div>`).join('')}
+  </div>
+  <div class="lab" style="margin-top:22px">Hoặc dùng email khác</div>
+  <div class="field"><span class="ic">${ic('mail')}</span><input id="ce" type="email" placeholder="email@example.com"></div>
+  <p class="hint">Dùng ô này để thử case trùng email: đăng ký bằng email trước, rồi đăng nhập ${PNAME[p]} với chính email đó.</p>
+  <button class="btn" onclick="socialCustom('${p}')">Tiếp tục</button>
+  <p class="hint ctr" style="margin-top:14px">Đây là màn hình giả lập của bản demo. Bản thật sẽ mở trang đăng nhập ${PNAME[p]}.</p>
+  </div>`;
+}
+function socialCustom(p){ const e=norm($('#ce').value);
+  if(!emailOK(e)) return toast('Email không hợp lệ.',1);
+  SOCIAL[p].push({uid:p[0]+'-'+e,email:e,name:e.split('@')[0]}); socialPick(p,p[0]+'-'+e); }
+
+function socialPick(p,uid){
+  const acc=SOCIAL[p].find(a=>a.uid===uid);
+  // Bước 3 — phương thức đã từng đăng nhập
+  let u=findByUid(p,uid);
+  if(u){ if(u.status==='locked')return blocked(); DB.session=u.id; save(); return go('home'); }
+  // Bước 4 — không có email, hoặc Apple ẩn email → tạo tài khoản mới, không map
+  if(!acc.email||acc.relay){
+    const nu=newUser({email:acc.email||null,emailVerified:false,nickname:acc.name});
+    nu.identities.push({provider:p,uid,email:acc.email||null});
+    DB.session=nu.id; save();
+    return go('welcome',{p,noEmail:!acc.email,relay:!!acc.relay});
+  }
+  // Mục 5 — đối chiếu email đã xác thực
+  const ex=verifiedEmailUser(acc.email);
+  if(!ex){ const nu=newUser({email:acc.email,emailVerified:true,nickname:acc.name});
+    nu.identities.push({provider:p,uid,email:acc.email}); DB.session=nu.id; save(); return go('welcome',{p}); }
+  if(ex.status==='locked') return blocked();
+  if(isHighValue(ex)) return go('stepup',{p,uid,userId:ex.id});
+  autoMap(ex,p,uid,acc);
+}
+const isHighValue=u=>u.deposit>=5e6||u.level>=40;
+function blocked(){ modal(`<div class="card"><div class="tick" style="background:#c62828">${ic('shield',28)}</div>
+  <h3>Không thể đăng nhập</h3><p>Tài khoản gắn với email này đang bị khóa. Vui lòng liên hệ hỗ trợ để được xử lý.</p>
+  <button class="btn sm" onclick="closeModal();go('login')">Đã hiểu</button></div>`); }
+
+function autoMap(u,p,uid,acc){
+  u.identities.push({provider:p,uid,email:acc.email});
+  u.autoMapped=true; u.restrictedUntil=now()+72*36e5; u.mergedAt=now();
+  DB.session=u.id;
+  mail('11.2',u.email,{p:PNAME[p],nick:u.nickname,lv:u.level,t:new Date().toLocaleString('vi-VN')});
+  save();
+  modal(`<div class="card"><div class="tick">${ic('check',30)}</div>
+    <h3>Xác nhận liên kết tài khoản<br>thành công !</h3>
+    <p>Email này trùng với tài khoản <b style="color:var(--tl)">${u.nickname} — cấp ${u.level}</b> của bạn, nên hệ thống đã tự động liên kết. Toàn bộ tiến trình được giữ nguyên.</p>
+    <p style="margin-top:10px;color:var(--warn)">Trong 72 giờ tới, đổi mật khẩu · hủy liên kết · giao dịch sẽ tạm bị hạn chế.</p>
+    <button class="btn sm" onclick="closeModal();go('home')">Vào chơi ngay</button>
+    <button class="btn sm ghost" onclick="notMe(${u.id})">Không phải tôi</button></div>`);
+}
+function notMe(id){ const u=DB.users.find(x=>x.id===id);
+  u.status='locked'; u.identities=u.identities.filter(i=>i.provider==='email'); u.autoMapped=false;
+  DB.session=null; save();
+  modal(`<div class="card"><div class="tick" style="background:#c62828">${ic('shield',28)}</div>
+   <h3>Đã khóa tài khoản</h3><p>Liên kết vừa tạo đã được gỡ, toàn bộ phiên đăng nhập bị đăng xuất. Vui lòng liên hệ hỗ trợ để mở khóa.</p>
+   <button class="btn sm" onclick="closeModal();go('login')">Về đăng nhập</button></div>`); }
+
+/* ---------- Step-up cho tài khoản giá trị cao ---------- */
+function scStepUp(){
+  const u=DB.users.find(x=>x.id===S.arg.userId);
+  return `<div class="pad">
+  <div class="hero" style="margin-top:26px">${ic('shield',26)}</div>
+  <h1 style="font-size:20px;line-height:28px;text-align:center;margin-top:16px">Cần xác minh thêm</h1>
+  <p class="sub ctr">Email này đã gắn với tài khoản <b style="color:var(--tl)">${u.nickname} — cấp ${u.level}</b>.
+   Vì tài khoản có giá trị cao, hãy xác minh để liên kết ${PNAME[S.arg.p]}.</p>
+  <div class="lab">Mật khẩu tài khoản</div>
+  <div class="field" id="fs"><span class="ic">${ic('lock')}</span><input id="sp" type="password" placeholder="Nhập mật khẩu">
+    <button onclick="tog('sp',this)">${ic('eye')}</button></div>
+  <div id="serr"></div>
+  <button class="btn" onclick="doStepUp()">Xác minh và liên kết</button>
+  <button class="btn ghost sm" onclick="stepNew()">Đây không phải tài khoản của tôi</button>
+  </div>`;
+}
+function doStepUp(){
+  const u=DB.users.find(x=>x.id===S.arg.userId);
+  if($('#sp').value!==u.password){fieldErr('fs');return showErr('serr','Mật khẩu không đúng.')}
+  const{p,uid}=S.arg, acc=SOCIAL[p].find(a=>a.uid===uid);
+  u.identities.push({provider:p,uid,email:acc.email});
+  mail('11.3',u.email,{p:PNAME[p],list:u.identities.map(i=>PNAME[i.provider]).join(', '),t:new Date().toLocaleString('vi-VN')});
+  DB.session=u.id; save();
+  modal(`<div class="card"><div class="tick">${ic('check',30)}</div><h3>Liên kết thành công !</h3>
+   <p>Không áp dụng hạn chế 72 giờ vì bạn đã xác minh chủ động.</p>
+   <button class="btn sm" onclick="closeModal();go('home')">Vào chơi ngay</button></div>`);
+}
+function stepNew(){ const{p,uid}=S.arg, acc=SOCIAL[p].find(a=>a.uid===uid);
+  const nu=newUser({email:acc.email,emailVerified:true,nickname:acc.name});
+  nu.identities.push({provider:p,uid,email:acc.email}); DB.session=nu.id; save(); go('welcome',{p}); }
+
+/* ---------- Khởi tạo thành công (social lần đầu) ---------- */
+function scWelcome(){
+  const u=DB.users.find(x=>x.id===DB.session), a=S.arg;
+  return `<div class="pad ctr">
+  <div class="hero" style="border-radius:28px">${ic('user',26)}</div>
+  <h1 style="font-size:20px;line-height:28px;margin-top:16px">Khởi tạo thành công!</h1>
+  <p class="sub">Tài khoản của bạn đã được liên kết với ${PNAME[a.p]}.<br>Bạn có thể điều chỉnh nickname hiển thị bên dưới.</p>
+  <div class="lab" style="text-align:left">Nickname</div>
+  <div class="field"><span class="ic">${ic('user')}</span><input id="wn" value="${u.nickname}"></div>
+  <p class="hint" style="text-align:left">Mặc định lấy từ tài khoản ${PNAME[a.p]} của bạn.</p>
+  ${a.noEmail||a.relay?`<div class="warnbox" style="text-align:left"><b>${ic('shield',15)} Nên bổ sung email</b>
+   <p>${a.noEmail?'Tài khoản của bạn chưa có email liên hệ.':'Bạn đang dùng email ẩn danh của Apple.'}
+   Nếu mất quyền truy cập ${PNAME[a.p]}, bạn sẽ không khôi phục được tài khoản và toàn bộ tiến trình.</p></div>`:''}
+  <div class="rows" style="text-align:left">
+    <div class="row"><span class="ic">${ic('gift',18)}</span>Truy cập hàng trăm trò chơi hấp dẫn</div>
+    <div class="row"><span class="ic">${ic('wallet',18)}</span>Nạp &amp; rút tiền nhanh chóng, an toàn</div>
+    <div class="row"><span class="ic">${ic('shield',18)}</span>Nhận khuyến mãi dành riêng cho thành viên mới</div>
+  </div>
+  <button class="btn" onclick="saveNick()">Vào chơi ngay</button>
+  <p class="hint">Nickname có thể chỉnh sửa lại trong phần Cài đặt tài khoản.</p>
+  </div>`;
+}
+function saveNick(){ const u=DB.users.find(x=>x.id===DB.session); u.nickname=$('#wn').value.trim()||u.nickname; save(); go('home'); }
+
+/* ---------- Quên mật khẩu ---------- */
+function stepper(n){ const L=['Email','Xác thực','Mật khẩu','Hoàn tất'];
+  $('#stepper').innerHTML=`<div class="steps">${L.map((t,i)=>{
+    const k=i+1<n?'dn':i+1===n?'on':''; return `<div class="step ${k}"><i>${i+1<n?ic('check',12):i+1}</i>${t}</div>`}).join('')}</div>`; }
+function scFp1(){ setTimeout(()=>stepper(1),0);
+  return `<div class="pad ctr">
+  <div class="hero">${ic('mail',26)}</div>
+  <h1 style="font-size:20px;line-height:28px;margin-top:16px">Quên mật khẩu?</h1>
+  <p class="sub">Nhập email đã đăng ký. Chúng tôi sẽ gửi mã xác thực để đặt lại mật khẩu.</p>
+  <div class="lab" style="text-align:left">Email</div>
+  <div class="field" id="ff"><span class="ic">${ic('mail')}</span><input id="fe1" type="email" placeholder="Vui lòng nhập email"></div>
+  <p class="hint" style="text-align:left">Mã OTP sẽ được gửi đến email này.</p>
+  <div id="ferr"></div>
+  <button class="btn" onclick="doFp1()">Gửi mã xác thực</button>
+  <button class="btn ghost sm" onclick="go('login')">Quay lại đăng nhập</button></div>`; }
+function doFp1(){
+  const e=norm($('#fe1').value); $('#ferr').innerHTML='';
+  if(!emailOK(e)){fieldErr('ff');return showErr('ferr','Email không hợp lệ.')}
+  const u=findByEmail(e);
+  // Ngoại lệ 21 — tài khoản chỉ đăng nhập bằng mạng xã hội
+  if(u&&!u.password&&u.identities.length){
+    mail('11.6',e,{p:u.identities.map(i=>PNAME[i.provider]).join('/')}); save();
+    return modal(`<div class="card"><div class="tick mail">${ic('mail',26)}</div>
+      <h3>Đã gửi email hướng dẫn</h3>
+      <p>Nếu email này có tài khoản, chúng tôi đã gửi hướng dẫn tới hộp thư của bạn. Kiểm tra cả thư mục spam.</p>
+      <button class="btn sm" onclick="closeModal();go('login')">Đã hiểu</button></div>`);
+  }
+  // Không tiết lộ email tồn tại hay không
+  if(!u){ return modal(`<div class="card"><div class="tick mail">${ic('mail',26)}</div>
+      <h3>Đã gửi email hướng dẫn</h3><p>Nếu email này có tài khoản, chúng tôi đã gửi hướng dẫn tới hộp thư của bạn.</p>
+      <button class="btn sm" onclick="closeModal();go('login')">Đã hiểu</button></div>`); }
+  DB.pending={type:'forgot',uid:u.id,email:e,code:otp(),exp:now()+30*6e4,tries:0};
+  mail('11.5',e,{code:DB.pending.code}); save(); go('fp2');
+}
+function scFp2(){ setTimeout(()=>{stepper(2);startCd()},0); const p=DB.pending;
+  return `<div class="pad ctr">
+  <div class="hero">${ic('mail',26)}</div>
+  <h1 style="font-size:20px;line-height:28px;margin-top:16px">Nhập mã xác thực</h1>
+  <p class="sub">Mã gồm 6 chữ số đã gửi đến<br><b style="color:var(--tl)">${mask(p.email)}</b></p>
+  <div class="otp">${Array.from({length:6},(_,i)=>`<input id="o${i}" inputmode="numeric" maxlength="1" oninput="otpIn(${i})" onkeydown="otpKey(event,${i})">`).join('')}</div>
+  <div id="oerr"></div>
+  <button class="btn" id="ob" disabled onclick="doOtp()">Xác nhận</button>
+  <p class="cdown" id="cd"></p>
+  <div class="chips" style="justify-content:center"><span class="chip" style="background:#fff5d6;color:#7a5a00">Bản demo — mã của bạn là ${p.code}</span></div></div>`; }
+function scFp3(){ setTimeout(()=>stepper(3),0);
+  return `<div class="pad ctr">
+  <div class="hero">${ic('lock',26)}</div>
+  <h1 style="font-size:20px;line-height:28px;margin-top:16px">Tạo mật khẩu mới</h1>
+  <p class="sub">Mật khẩu gồm 8–20 ký tự, có ít nhất 1 chữ cái.</p>
+  <div class="lab" style="text-align:left">Mật khẩu mới</div>
+  <div class="field" id="n1"><span class="ic">${ic('lock')}</span><input id="np" type="password" placeholder="Nhập mật khẩu mới">
+    <button onclick="tog('np',this)">${ic('eye')}</button></div>
+  <div class="lab" style="text-align:left">Xác nhận mật khẩu</div>
+  <div class="field" id="n2"><span class="ic">${ic('lock')}</span><input id="np2" type="password" placeholder="Nhập lại mật khẩu mới">
+    <button onclick="tog('np2',this)">${ic('eye')}</button></div>
+  <div id="nerr"></div>
+  <button class="btn" onclick="doFp3()">Đặt lại mật khẩu</button></div>`; }
+function doFp3(){
+  const a=$('#np').value,b=$('#np2').value; $('#nerr').innerHTML='';
+  if(!passOK(a)){fieldErr('n1');return showErr('nerr','Mật khẩu phải 8–20 ký tự và có ít nhất 1 chữ cái.')}
+  if(a!==b){fieldErr('n2');return showErr('nerr','Hai mật khẩu không khớp.')}
+  const u=DB.users.find(x=>x.id===DB.pending.uid); u.password=a; u.emailVerified=true;
+  mail('11.7',u.email,{t:new Date().toLocaleString('vi-VN')}); DB.pending=null; DB.session=null; save();
+  setTimeout(()=>stepper(4),0);
+  modal(`<div class="card"><div class="tick">${ic('check',30)}</div><h3>Đổi mật khẩu thành công!</h3>
+   <p>Vui lòng đăng nhập lại bằng mật khẩu mới để tiếp tục trải nghiệm.</p>
+   <button class="btn sm" onclick="closeModal();go('login')">Đăng nhập ngay</button></div>`);
+}
+
+/* ---------- Home ---------- */
+function scHome(){
+  const u=DB.users.find(x=>x.id===DB.session);
+  if(!u) return setTimeout(()=>go('login'),0),'';
+  const rest=u.restrictedUntil>now();
+  const hrs=Math.ceil((u.restrictedUntil-now())/36e5);
+  const meth=u.identities.map(i=>PNAME[i.provider]);
+  const R=(icn,t,blocked)=>`<div class="row ${blocked?'off':''}" onclick="act('${t}',${blocked?1:0})">
+    <span class="ic">${ic(icn,18)}</span>${t}${blocked?`<span class="rt">Tạm hạn chế</span>`:''}</div>`;
+  return `<div class="pad">
+  <div class="hcard"><div class="nm">${u.nickname}</div>
+    <div class="mt">Cấp ${u.level} · ${u.email?mask(u.email):'chưa có email liên hệ'}</div>
+    <div class="bal">${money(u.balance)}</div></div>
+  <div class="chips">${meth.map(m=>`<span class="chip">Đăng nhập: ${m}</span>`).join('')}
+    ${isHighValue(u)?'<span class="chip" style="background:#fff0d6;color:#8a4b00">Tài khoản giá trị cao</span>':''}</div>
+  ${rest?`<div class="warnbox"><b>${ic('shield',15)} Tài khoản vừa được liên kết tự động</b>
+    <p>Một số thao tác tạm bị hạn chế trong ${hrs} giờ nữa để bảo vệ bạn. Xác minh bằng mật khẩu để gỡ hạn chế ngay.</p></div>`:''}
+  <div class="rows">
+    ${R('wallet','Nạp tiền',0)}
+    ${R('wallet','Rút tiền',rest)}
+    ${R('key','Đổi mật khẩu',rest)}
+    ${R('unlink','Hủy liên kết phương thức',rest||meth.length<2)}
+    ${R('gift','Chuyển vật phẩm cho bạn bè',rest)}
+    ${R('logout','Đăng xuất',0)}
+  </div>
+  <p class="hint ctr" style="margin-top:16px">Đây là màn hình mô phỏng để thể hiện cơ chế hạn chế 72 giờ trong tài liệu.</p>
+  </div>`;
+}
+function act(t,blocked){
+  const u=DB.users.find(x=>x.id===DB.session);
+  if(blocked){ if(u.identities.length<2&&t.startsWith('Hủy'))
+      return toast('Tài khoản phải còn ít nhất một phương thức đăng nhập.',1);
+    return toast('Thao tác này tạm bị hạn chế trong 72 giờ sau khi liên kết tự động.',1); }
+  if(t==='Đăng xuất'){ DB.session=null; save(); return go('login'); }
+  if(t==='Nạp tiền'){ u.balance+=500000; u.deposit+=500000; save(); render();
+    return toast('Đã nạp 500.000 đ (mô phỏng). Tổng nạp: '+money(u.deposit)); }
+  toast('Chức năng '+t.toLowerCase()+' — ngoài phạm vi bản demo này.');
+}
+
+/* =========================================================================
+   DEMO PANEL
+   ========================================================================= */
+function paintPanel(){
+  const p=$('#panel'); if(!p)return;
+  const u=DB.users.map(x=>{
+    const tags=[x.emailVerified?'<span class="tag">đã xác thực</span>':'<span class="tag">chờ xác thực</span>',
+      ...x.identities.map(i=>`<span class="tag">${PNAME[i.provider]}</span>`),
+      isHighValue(x)?'<span class="tag hi">giá trị cao</span>':'',
+      x.status==='locked'?'<span class="tag lk">bị khóa</span>':'',
+      x.restrictedUntil>now()?'<span class="tag hi">hạn chế 72h</span>':''].join('');
+    return `<div class="u"><b>${x.nickname}</b> · cấp ${x.level} · nạp ${money(x.deposit)}<br>
+      <span style="color:#8fa691">${x.email||'không có email'}</span><br>${tags}
+      <div style="margin-top:7px;display:flex;gap:5px;flex-wrap:wrap">
+       <button style="width:auto;margin:0;padding:4px 8px;font-size:10.5px" onclick="mk(${x.id},'hi')">Đặt giá trị cao</button>
+       <button style="width:auto;margin:0;padding:4px 8px;font-size:10.5px" onclick="mk(${x.id},'lock')">${x.status==='locked'?'Mở khóa':'Khóa'}</button>
+       <button style="width:auto;margin:0;padding:4px 8px;font-size:10.5px" onclick="mk(${x.id},'clr')">Gỡ hạn chế 72h</button>
+      </div></div>`}).join('')||'<p class="muted">Chưa có tài khoản nào. Hãy đăng ký thử.</p>';
+
+  const m=DB.mails.slice(0,8).map(x=>{const t=TPL[x.tpl](x.vars);
+    return `<div class="mailitem" onclick="openMail('${x.id}')"><b>${t.s}</b>
+      <span>${x.tpl} → ${x.to||'—'} · ${new Date(x.at).toLocaleTimeString('vi-VN')}</span></div>`}).join('')
+    ||'<p class="muted">Chưa có email nào được gửi.</p>';
+
+  p.innerHTML=`
+  <h4>Kịch bản demo</h4>
+  <button onclick="seed()"><b>1 · Dựng sẵn tài khoản email</b><br><span style="color:#8fa691">nguyenvana@gmail.com, cấp 40, đã nạp 8tr</span></button>
+  <button onclick="go('login');toast('Bấm Google, chọn Nguyễn Văn A')"><b>2 · Thử auto-map</b><br><span style="color:#8fa691">Đăng nhập Google cùng email → tự gộp</span></button>
+  <button onclick="go('social',{p:'facebook'})"><b>3 · Facebook không cấp email</b><br><span style="color:#8fa691">Chọn Minh Tuấn → tạo tài khoản mới</span></button>
+  <button onclick="go('social',{p:'apple'})"><b>4 · Apple ẩn email</b><br><span style="color:#8fa691">Chọn Người dùng Apple → không gộp</span></button>
+  <hr>
+  <h4>Tài khoản trong hệ thống</h4><div>${u}</div>
+  <hr>
+  <h4>Hộp thư hệ thống</h4>
+  <p class="muted">Các email sinh ra theo mẫu trong tài liệu đặc tả.</p>
+  <div id="mailbox">${m}</div>
+  <hr>
+  <button onclick="reset()" style="background:#3a1e1e;border-color:#5a2a2a;color:#ffb4b4"><b>Xóa toàn bộ dữ liệu demo</b></button>`;
+}
+function openMail(id){
+  const x=DB.mails.find(m=>String(m.id)===String(id)); if(!x)return;
+  const t=TPL[x.tpl](x.vars);
+  $('#mailbox').innerHTML=`<div class="mailbody"><b>Mẫu ${x.tpl}</b>
+Tới: ${x.to||'—'}
+Tiêu đề: ${t.s}
+
+${t.b}</div><button onclick="paintPanel()">← Về danh sách</button>`;
+}
+function mk(id,what){ const u=DB.users.find(x=>x.id===id);
+  if(what==='hi'){u.level=40;u.deposit=8e6;u.balance=Math.max(u.balance,8e6)}
+  if(what==='lock')u.status=u.status==='locked'?'active':'locked';
+  if(what==='clr'){u.restrictedUntil=0;u.autoMapped=false}
+  save(); if(S.screen==='home')render(); toast('Đã cập nhật tài khoản demo.'); }
+function seed(){
+  let u=findByEmail('nguyenvana@gmail.com');
+  if(!u){ u=newUser({email:'nguyenvana@gmail.com',emailVerified:true,password:'pg88demo',nickname:'Đại Gia 8386'});
+    u.identities.push({provider:'email',uid:'nguyenvana@gmail.com',email:'nguyenvana@gmail.com'}); }
+  u.level=40; u.deposit=8e6; u.balance=8e6; u.emailVerified=true; u.password='pg88demo';
+  save(); go('login');
+  toast('Đã tạo: nguyenvana@gmail.com / pg88demo — cấp 40, nạp 8tr');
+}
+
+/* ---------------- ảnh brand ----------------
+   Nếu có assets/logo.png và assets/banner.png cạnh file này thì dùng bản local
+   (vĩnh viễn). Nếu không, tạm dùng link Figma — link này hết hạn sau ~7 ngày. */
+[['logo','--logo-url'],['banner','--banner-url']].forEach(([n,v])=>{
+  const im=new Image();
+  im.onload=()=>document.documentElement.style.setProperty(v,`url("assets/${n}.png")`);
+  im.src='assets/'+n+'.png';
+});
+
+/* ---------------- boot ---------------- */
+load(); paintPanel();
+go(DB.session?'home':'login');
+</script>
+</body>
+</html>
