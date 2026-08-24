@@ -1001,16 +1001,18 @@ h1{font-family:var(--dsp);font-size:clamp(30px,4vw,46px);font-weight:600;letter-
 @media (max-width:600px){.ov-roles{grid-template-columns:1fr 1fr}}
 
 /* 4 màn ingame theo vai trò */
-.ov-ingame{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.ov-ingame-card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.ov-ingame-thumb{position:relative;height:110px;overflow:hidden;background:#0B0F14}
-.ov-ingame-thumb img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
-.ov-ingame-role{position:absolute;left:9px;top:9px;padding:3px 10px;border-radius:99px;font-size:10.5px;
-  font-weight:700;color:#fff;letter-spacing:.02em}
-.ov-ingame-body{padding:13px 14px 15px}
-.ov-ingame-body h5{margin:0 0 8px;font-size:13.5px;font-weight:700;color:var(--ink)}
-.ov-ingame-body ul{margin:0;padding-left:16px;font-size:11.5px;line-height:1.6;color:var(--muted)}
-@media (max-width:900px){.ov-ingame{grid-template-columns:1fr 1fr}}
+.ov-ingame{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.ov-ingame-card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px;
+  display:flex;flex-direction:column;gap:11px}
+.ov-ingame-card:first-child{grid-column:1/-1}
+.ov-ingame-card:first-child .land{max-width:560px;margin:0 auto}
+.ov-ingame-card:first-child .ov-ingame-list{max-width:560px;margin:0 auto;width:100%}
+.ov-ingame-hd{display:flex;align-items:center;gap:8px}
+.ov-ingame-hd i{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ov-ingame-hd b{font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
+.ov-ingame-card .phone,.ov-ingame-card .land{max-width:100%;pointer-events:none}
+.ov-ingame-list{margin:0;padding-left:16px;font-size:11.5px;line-height:1.6;color:var(--muted)}
+@media (max-width:900px){.ov-ingame{grid-template-columns:1fr 1fr}.ov-ingame-card:first-child{grid-column:1/-1}}
 @media (max-width:600px){.ov-ingame{grid-template-columns:1fr}}
 footer{border-top:1px solid var(--line);padding:20px 0 40px;font-family:var(--mono);font-size:11px;color:var(--faint);line-height:1.9}
 [hidden]{display:none !important}
@@ -2589,18 +2591,27 @@ function buildOverview(){
     return '<div class="ov-role-chip"><i style="background:'+r[1]+';color:'+r[2]+'">'+r[0]+'</i><b>'+r[3]+'</b><p>'+r[4]+'</p></div>';
   }).join('');
 
-  /* ---- 5. màn ingame theo từng vai trò — cùng một nguồn camera của Dealer ---- */
+  /* ---- 5. màn ingame theo từng vai trò — dựng bằng chính component thật, cùng nguồn camera của Dealer ---- */
   var ingame=[
-    ["var(--r-dealer)","Dealer","Bật/tắt live, chọn mic &amp; camera","Mở/khoá cược theo đúng nhịp ván","Nhập kết quả — camera tự zoom vào hộp xí ngầu"],
-    ["var(--r-host)","Nhà cái","Theo dõi % cược Tài/Xỉu theo thời gian thực","Sổ tài chính: rủi ro, quỹ bàn, hoa hồng MC","Xem lại cầu 8 ván gần nhất"],
-    ["var(--r-mc)","MC","Xem cùng camera bàn, kèm khung camera riêng (PiP)","Chat &amp; quà tặng từ người xem trực tiếp","Thống kê hoa hồng theo lượt tương tác"],
-    ["var(--r-user)","Người chơi","Đặt nhiều cửa cùng lúc bằng chip trực quan","Đồng hồ đếm ngược, rung cảnh báo khi sắp đóng cược","Chat, xem cầu, đổi bàn ngay trong màn"]
+    ["var(--r-dealer)","Dealer","ovIngameDealer","land","Bật/tắt live, chọn mic &amp; camera","Mở/khoá cược theo đúng nhịp ván","Nhập kết quả — camera tự zoom vào hộp xí ngầu"],
+    ["var(--r-host)","Nhà cái","ovIngameHost","phone","Theo dõi % cược Tài/Xỉu theo thời gian thực","Sổ tài chính: rủi ro, quỹ bàn, hoa hồng MC","Xem lại cầu 8 ván gần nhất"],
+    ["var(--r-mc)","MC","ovIngameMC","phone","Xem cùng camera bàn, kèm khung camera riêng (PiP)","Chat &amp; quà tặng từ người xem trực tiếp","Thống kê hoa hồng theo lượt tương tác"],
+    ["var(--r-user)","Người chơi","ovIngameUser","phone","Đặt nhiều cửa cùng lúc bằng chip trực quan","Đồng hồ đếm ngược, rung cảnh báo khi sắp đóng cược","Chat, xem cầu, đổi bàn ngay trong màn"]
   ];
   $("ovIngame").innerHTML=ingame.map(function(g){
-    return '<div class="ov-ingame-card"><div class="ov-ingame-thumb">'+camImgTag(null,0)+
-      '<span class="ov-ingame-role" style="background:'+g[0]+'">'+g[1]+'</span></div>'+
-      '<div class="ov-ingame-body"><h5>Màn hình trong ván</h5><ul><li>'+g[2]+'</li><li>'+g[3]+'</li><li>'+g[4]+'</li></ul></div></div>';
+    return '<div class="ov-ingame-card"><div class="ov-ingame-hd"><i style="background:'+g[0]+'"></i><b>'+g[1]+'</b></div>'+
+      '<div class="'+g[3]+'" id="'+g[2]+'"></div>'+
+      '<ul class="ov-ingame-list"><li>'+g[4]+'</li><li>'+g[5]+'</li><li>'+g[6]+'</li></ul></div>';
   }).join('');
+  /* các hàm render này đọc state mô phỏng dùng chung — mượn tạm bước "Mở cược" (đang live) để có
+     ảnh chụp sinh động, rồi trả lại đúng bước ban đầu; enter(0) chạy ngay sau sẽ tự khởi động lại. */
+  var savedI=st.i, savedT=st.t;
+  st.i=3; st.t=1.2;
+  renderDealer("ovIngameDealer","held");
+  renderHost("ovIngameHost");
+  renderMC("ovIngameMC");
+  st.i=savedI; st.t=savedT;
+  $("ovIngameUser").innerHTML=userFlowGameHTML();
 
   var feats=[
     ["dice","Bàn Tài Xỉu trực tiếp","Camera dealer phát thật, ô cược TÀI/XỈU và các số đơn 4–17, tỉ lệ ăn theo % cược từng cửa, có lịch sử kết quả dạng road."],
